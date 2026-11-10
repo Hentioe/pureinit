@@ -1,0 +1,12 @@
+.{
+    .name = .zigcleaner,
+    .version = "0.0.0",
+    .fingerprint = 0xdbe77ba0ee207807,
+    .minimum_zig_version = "0.17.1",
+    .dependencies = .{},
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+    },
+}
