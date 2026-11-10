@@ -1,4 +1,6 @@
 tasks {
-    install "zig build --release=fast install --prefix ~/.local"
+    test "zig build test"
+    format "zig fmt ."
+    install "zig build --release=safe install --prefix ~/.local"
     uninstall "rm ~/.local/bin/codec"
 }
