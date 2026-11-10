@@ -1,0 +1,4 @@
+tasks {
+    install "zig build --release=fast install --prefix ~/.local"
+    uninstall "rm ~/.local/bin/zigcleaner"
+}
