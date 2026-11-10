@@ -1,5 +1,5 @@
 const std = @import("std");
-const zigcleaner = @import("zigcleaner");
+const codec = @import("codec");
 const patch_text = @embedFile("zig-init-0171.patch");
 
 pub fn main(init: std.process.Init) !void {
@@ -11,7 +11,7 @@ pub fn main(init: std.process.Init) !void {
     const target_path = if (args.len == 2) args[1] else ".";
 
     const working_dir = std.Io.Dir.cwd();
-    var patch = try zigcleaner.diff_parser.parse(allocator, patch_text);
+    var patch = try codec.diff_parser.parse(allocator, patch_text);
     defer patch.deinit();
 
     var target_dir = try working_dir.openDir(init.io, target_path, .{});
@@ -26,7 +26,7 @@ pub fn main(init: std.process.Init) !void {
     for (patch.files) |file_diff| {
         const path = file_diff.new_path orelse file_diff.old_path orelse return error.InvalidFileHeader;
         std.debug.print("Applying {s}\n", .{path});
-        try zigcleaner.file_ops.updateFile(init.io, allocator, target_dir, file_diff);
+        try codec.file_ops.updateFile(init.io, allocator, target_dir, file_diff);
     }
 }
 

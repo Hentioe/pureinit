@@ -1,7 +1,7 @@
 .{
-    .name = .zigcleaner,
+    .name = .codec,
     .version = "0.0.0",
-    .fingerprint = 0xdbe77ba0ee207807,
+    .fingerprint = 0xf81ad1291c262b4d,
     .minimum_zig_version = "0.17.1",
     .dependencies = .{},
     .paths = .{
