@@ -1,6 +1,6 @@
 const std = @import("std");
 const codec = @import("codec");
-const patch_text = @embedFile("zig-init-0171.patch");
+const zig_init_patch = @embedFile("diff_patchs/zig-init.0.17.1.patch");
 
 pub fn main(init: std.process.Init) !void {
     const allocator = init.arena.allocator();
@@ -11,7 +11,7 @@ pub fn main(init: std.process.Init) !void {
     const target_path = if (args.len == 2) args[1] else ".";
 
     const working_dir = std.Io.Dir.cwd();
-    var patch = try codec.diff_parser.parse(allocator, patch_text);
+    var patch = try codec.diff_parser.parse(allocator, zig_init_patch);
     defer patch.deinit();
 
     var target_dir = try working_dir.openDir(init.io, target_path, .{});
