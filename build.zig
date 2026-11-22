@@ -4,6 +4,9 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
+    const clap = b.dependency("clap", .{});
+    const logger = b.dependency("logger", .{});
+
     const mod = b.addModule("pureinit", .{
         .root_source_file = b.path("src/root.zig"),
         .target = target,
@@ -20,6 +23,9 @@ pub fn build(b: *std.Build) void {
             },
         }),
     });
+
+    exe.root_module.addImport("clap", clap.module("clap"));
+    exe.root_module.addImport("logger", logger.module("logger"));
 
     b.installArtifact(exe);
 

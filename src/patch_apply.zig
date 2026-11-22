@@ -1,7 +1,8 @@
 const std = @import("std");
-const model = @import("root.zig");
+const Allocator = std.mem.Allocator;
+const root = @import("root.zig");
 
-const ApplyError = error{
+pub const ApplyError = Allocator.Error || error{
     InvalidHunkRange,
     HunksOutOfOrder,
     HunkOutOfBounds,
@@ -16,7 +17,7 @@ const Line = struct {
 
 /// 在内存中应用一个文件的 hunk，返回新内容；不读取或写入任何文件。
 /// 调用者负责使用传入的 allocator 释放返回的字节切片。
-pub fn applyFileDiff(allocator: std.mem.Allocator, source: []const u8, file_diff: model.FileDiff) ![]u8 {
+pub fn applyFileDiff(allocator: std.mem.Allocator, source: []const u8, file_diff: root.FileDiff) ApplyError![]u8 {
     var source_lines = try splitLines(allocator, source);
     defer source_lines.deinit(allocator);
 
@@ -91,7 +92,7 @@ pub fn applyFileDiff(allocator: std.mem.Allocator, source: []const u8, file_diff
     return try output.toOwnedSlice(allocator);
 }
 
-fn splitLines(allocator: std.mem.Allocator, source: []const u8) !std.ArrayList(Line) {
+fn splitLines(allocator: std.mem.Allocator, source: []const u8) Allocator.Error!std.ArrayList(Line) {
     var lines: std.ArrayList(Line) = .empty;
     errdefer lines.deinit(allocator);
 
@@ -107,16 +108,16 @@ fn splitLines(allocator: std.mem.Allocator, source: []const u8) !std.ArrayList(L
 }
 
 test "applies edits by position without matching context text" {
-    const diff_lines = [_]model.DiffLine{
+    const diff_lines = [_]root.DiffLine{
         .{ .kind = .context, .text = "", .has_newline = true },
         .{ .kind = .deletion, .text = "remove", .has_newline = true },
         .{ .kind = .addition, .text = "insert", .has_newline = true },
         .{ .kind = .context, .text = "", .has_newline = true },
     };
-    const hunks = [_]model.Hunk{
+    const hunks = [_]root.Hunk{
         .{ .old_start = 1, .old_count = 3, .new_start = 1, .new_count = 3, .lines = &diff_lines },
     };
-    const file_diff = model.FileDiff{
+    const file_diff = root.FileDiff{
         .old_path = "example.txt",
         .new_path = "example.txt",
         .hunks = &hunks,
@@ -127,26 +128,26 @@ test "applies edits by position without matching context text" {
 }
 
 test "applies an insertion at the beginning of a file" {
-    const diff_lines = [_]model.DiffLine{
+    const diff_lines = [_]root.DiffLine{
         .{ .kind = .addition, .text = "first", .has_newline = true },
     };
-    const hunks = [_]model.Hunk{
+    const hunks = [_]root.Hunk{
         .{ .old_start = 0, .old_count = 0, .new_start = 1, .new_count = 1, .lines = &diff_lines },
     };
-    const file_diff = model.FileDiff{ .old_path = null, .new_path = "example.txt", .hunks = &hunks };
+    const file_diff = root.FileDiff{ .old_path = null, .new_path = "example.txt", .hunks = &hunks };
     const actual = try applyFileDiff(std.testing.allocator, "rest\n", file_diff);
     defer std.testing.allocator.free(actual);
     try std.testing.expectEqualStrings("first\nrest\n", actual);
 }
 
 test "rejects a hunk beyond the source line range" {
-    const diff_lines = [_]model.DiffLine{
+    const diff_lines = [_]root.DiffLine{
         .{ .kind = .deletion, .text = "removed", .has_newline = true },
     };
-    const hunks = [_]model.Hunk{
+    const hunks = [_]root.Hunk{
         .{ .old_start = 2, .old_count = 1, .new_start = 1, .new_count = 0, .lines = &diff_lines },
     };
-    const file_diff = model.FileDiff{ .old_path = "example.txt", .new_path = null, .hunks = &hunks };
+    const file_diff = root.FileDiff{ .old_path = "example.txt", .new_path = null, .hunks = &hunks };
     try std.testing.expectError(
         error.HunkOutOfBounds,
         applyFileDiff(std.testing.allocator, "actual\n", file_diff),
