@@ -1,7 +1,7 @@
 .{
-    .name = .codec,
+    .name = .pureinit,
     .version = "0.0.0",
-    .fingerprint = 0xf81ad1291c262b4d,
+    .fingerprint = 0x872adeea8449edff,
     .minimum_zig_version = "0.17.1",
     .dependencies = .{},
     .paths = .{

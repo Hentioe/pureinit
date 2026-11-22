@@ -2,5 +2,5 @@ tasks {
     test "zig build test"
     format "zig fmt ."
     install "zig build --release=safe install --prefix ~/.local"
-    uninstall "rm ~/.local/bin/codec"
+    uninstall "rm ~/.local/bin/pureinit"
 }
