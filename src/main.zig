@@ -21,7 +21,7 @@ pub fn main(init: std.process.Init) !void {
     if (cli.patch()) |patch_path| {
         patch_info = try pureinit.patch_loader.loadFromFile(arena, patch_path);
     } else {
-        patch_info = pureinit.patch_loader.getFromEnv(arena) orelse return error.PatchNotFound;
+        patch_info = try pureinit.patch_loader.getFromEnv(arena, target_path);
     }
 
     std.debug.print("Patch info:\n", .{});
@@ -35,7 +35,7 @@ pub fn main(init: std.process.Init) !void {
     var target_dir = try working_dir.openDir(init.io, target_path, .{});
     defer target_dir.close(init.io);
 
-    std.debug.print("Apply patch to: '{s}'? [y/N] ", .{target_path});
+    std.debug.print("Apply patch to: '{s}'? [y/N]: ", .{target_path});
     if (!try confirm(init.io)) {
         std.log.warn("Cancelled", .{});
         return;
