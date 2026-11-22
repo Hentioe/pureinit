@@ -2,7 +2,6 @@ const std = @import("std");
 const Cli = @import("Cli.zig");
 const logger = @import("logger");
 const pureinit = @import("pureinit");
-const zig_init_patch = @embedFile("diff_patchs/zig-init.0.17.1.patch");
 
 pub const std_options: std.Options = .{ .logFn = logger.logFn };
 
@@ -17,14 +16,26 @@ pub fn main(init: std.process.Init) !void {
     // 获取目标路径
     const target_path = cli.target() orelse ".";
 
-    const working_dir = std.Io.Dir.cwd();
-    var patch = try pureinit.diff_parser.parse(arena, zig_init_patch);
+    // 加载/获取补丁内容
+    var patch_info: pureinit.patch_loader.PatchInfo = undefined;
+    if (cli.patch()) |patch_path| {
+        patch_info = try pureinit.patch_loader.loadFromFile(arena, patch_path);
+    } else {
+        patch_info = pureinit.patch_loader.getFromEnv(arena) orelse return error.PatchNotFound;
+    }
+
+    std.debug.print("Patch info:\n", .{});
+    // 输出补丁信息
+    try patch_info.printTable(arena);
+
+    var patch = try pureinit.diff_parser.parse(arena, patch_info.content);
     defer patch.deinit();
 
+    const working_dir = std.Io.Dir.cwd();
     var target_dir = try working_dir.openDir(init.io, target_path, .{});
     defer target_dir.close(init.io);
 
-    std.debug.print("Apply cleanup patch to: '{s}'? [y/N] ", .{target_path});
+    std.debug.print("Apply patch to: '{s}'? [y/N] ", .{target_path});
     if (!try confirm(init.io)) {
         std.log.warn("Cancelled", .{});
         return;

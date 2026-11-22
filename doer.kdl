@@ -1,6 +1,6 @@
 tasks {
     test "zig build test"
-    format "zig fmt ."
+    format "zig fmt build.zig build.zig.zon src/"
     install "zig build --release=safe install --prefix ~/.local"
     uninstall "rm ~/.local/bin/pureinit"
 }

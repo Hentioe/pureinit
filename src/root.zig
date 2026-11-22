@@ -1,8 +1,7 @@
-//! By convention, root.zig is the root source file when making a package.
-
 const std = @import("std");
 pub const diff_parser = @import("diff_parser.zig");
 pub const patch_apply = @import("patch_apply.zig");
+pub const patch_loader = @import("patch_loader.zig");
 pub const file_ops = @import("file_ops.zig");
 
 pub const Patch = struct {

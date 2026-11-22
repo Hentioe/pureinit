@@ -12,6 +12,10 @@
             .url = "git+https://github.com/Hentioe/zig-logger#ceb7167d77877a316979075c22d5d4e25ed76618",
             .hash = "logger-0.0.0-UaAVuAYaAACs4Kzb6K_XnYu2ViWko3xBy-jTPk87La61",
         },
+        .prettytable = .{
+            .url = "git+https://github.com/dying-will-bullet/prettytable-zig#02eff955601205a6718a9520a605f5a3a2b991cb",
+            .hash = "prettytable-0.6.0-eV_JBGm9AQBN5urJC3_40fK3eD0MdxP7L3cDscewoLBt",
+        },
     },
     .paths = .{
         "build.zig",

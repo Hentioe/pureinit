@@ -8,6 +8,7 @@ const Self = @This();
 const params = clap.parseParamsComptime(
     \\-h, --help            Display this help and exit.
     \\-t, --target <str>    Specify the target path.
+    \\-p, --patch <str>     Specify the patch file.
     \\
 );
 const Res = clap.Result(clap.Help, &params, clap.parsers.default);
@@ -41,6 +42,10 @@ pub fn parse(app_init: std.process.Init) !Self {
 
 pub fn target(self: *const Self) ?[]const u8 {
     return self.res.args.target;
+}
+
+pub fn patch(self: *const Self) ?[]const u8 {
+    return self.res.args.patch;
 }
 
 pub fn isHelp(self: *const Self) bool {

@@ -6,11 +6,14 @@ pub fn build(b: *std.Build) void {
 
     const clap = b.dependency("clap", .{});
     const logger = b.dependency("logger", .{});
+    const prettytable = b.dependency("prettytable", .{});
 
     const mod = b.addModule("pureinit", .{
         .root_source_file = b.path("src/root.zig"),
         .target = target,
     });
+
+    mod.addImport("prettytable", prettytable.module("prettytable"));
 
     const exe = b.addExecutable(.{
         .name = "pureinit",
