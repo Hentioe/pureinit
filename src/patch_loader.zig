@@ -108,6 +108,7 @@ pub fn getFromEnv(allocator: Allocator, dir: []const u8) !PatchInfo {
 }
 
 const versions = .{
+    "0.15.2",
     "0.16.0",
     "0.17.0",
     "0.17.1",
